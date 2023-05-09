@@ -37,25 +37,23 @@
             $teste1 = $_POST['campo1'];
     }
 
-    $loopback = $teste1;
-    echo $loopback;
-    $cgnat_range = 150;
+    $portaInicial = 1024;
+    $portaFinal = 0;
+    $ipcgnat = "x.x.x.";
+    $ippublico = "y.y.y.y";
+    $iterador = 0;
 
-        echo "/ip firewall nat add chain=src-nat protocol=icmp action=srcnat  to-address=".$loopback."<br>";
-        for ($i=0; $i < 32 ; $i++) { 
-            echo "/ip firewall nat add chain=src-nat protocol=tcp action=srcnat src-address=".$i." to-address=".$cgnat_range." to-port to-ports=1024-3039 <br>";
-            echo "/ip firewall nat add chain=src-nat protocol=udp action=srcnat src-address=".$i." to-address=".$cgnat_range." to-port to-ports=1024-3039 <br>";
-        }
+    echo "/ip firewall nat add chain=src-nat protocol=icmp action=srcnat src-address=100.64.x.y to-address=".$ippublico."<br>";
+    # For para o inicio
+    for ($i=$portaInicial; $i <= 63519; $i += 2015) {
+        $portaFinal = $portaInicial + 2015;
+        echo "/ip firewall nat add chain=src-nat protocol=tcp action=srcnat src-address=".$ipcgnat."".$iterador." to-address=".$ippublico." to-port to-ports=".$portaInicial."-".$portaFinal."<br>" ;
+        echo "/ip firewall nat add chain=src-nat protocol=udp action=srcnat src-address=".$ipcgnat."".$iterador." to-address=".$ippublico." to-port to-ports=".$portaInicial."-".$portaFinal."<br>" ;
+        $portaInicial = $portaFinal+1;
+        $iterador += 1;
+    }
     
     ?>
     </div>
-    <!-- Regras para serem geradas
-
-    /ip firewall nat add chain=src-nat protocol=tcp action=srcnat src-address=100.64.0.0 to-address=2.2.2.2 to-port to-ports=1024-3039 
-    /ip firewall nat add chain=src-nat protocol=udp action=srcnat src-address=100.64.0.0 to-address=2.2.2.2 to-port to-ports=1024-3039 
-
-    /ip firewall nat add chain=src-nat protocol=icmp action=srcnat  to-address=2.2.2.2
-
-    -->
   </body>
 </html>
