@@ -39,16 +39,22 @@
     $ippublico = $loopback;
     $iterador = 0;
 
-    echo "/ip firewall nat add chain=src-nat protocol=icmp action=srcnat src-address=100.64.".$x[3].".0/25 to-address=".$ippublico."<br>";
-    # For para o inicio
+    # Cria a loopback
+    echo '/ip address add address='.$ippublico.'/32 interface=loopback comment="CGNAT IP '.$x[3].'" <br>';
+
+    # Cria o mapeamento para ICMP
+    echo '/ip firewall nat add chain=srcnat protocol=icmp action=src-nat src-address=100.64.'.$x[3].'.0/27 to-address='.$ippublico.' comment=" ======== CGNAT '.$ippublico.' ========== " <br>';
+    # For para o inicio para mapeamento de portas
     for ($i=$portaInicial; $i <= 63519; $i += 2015) {
         $portaFinal = $portaInicial + 2015;
-        echo "/ip firewall nat add chain=src-nat protocol=tcp action=srcnat src-address=100.64.".$x[3].".".$iterador." to-address=".$ippublico." to-port to-ports=".$portaInicial."-".$portaFinal."<br>" ;
-        echo "/ip firewall nat add chain=src-nat protocol=udp action=srcnat src-address=100.64.".$x[3].".".$iterador." to-address=".$ippublico." to-port to-ports=".$portaInicial."-".$portaFinal."<br>" ;
+        echo "/ip firewall nat add chain=srcnat protocol=tcp action=src-nat src-address=100.64.".$x[3].".".$iterador." to-address=".$ippublico." to-ports=".$portaInicial."-".$portaFinal."<br>" ;
+        echo "/ip firewall nat add chain=srcnat protocol=udp action=src-nat src-address=100.64.".$x[3].".".$iterador." to-address=".$ippublico." to-ports=".$portaInicial."-".$portaFinal."<br>" ;
         $portaInicial = $portaFinal+1;
         $iterador += 1;
     }
     
+    echo '/ip pool add ranges=100.64.'.$x[3].'.0/27 name=Cgant'.$x[3].'';
+
     ?>
     </div>
   </body>
